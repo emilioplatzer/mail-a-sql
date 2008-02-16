@@ -69,6 +69,12 @@ namespace Mail2Access
 			re.Write(contenido);
 			re.Close();
 		}
+		public static void borrarArchivo(string nombreArchivo){
+			File.Delete(nombreArchivo);
+		}
+		public static bool existeArchivo(string nombreArchivo){
+			return File.Exists(nombreArchivo);
+		}
 	}
 	
 	/// <summary>
