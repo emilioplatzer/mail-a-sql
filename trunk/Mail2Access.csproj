@@ -25,6 +25,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <ItemGroup>
+    <Reference Include="nunit.framework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -34,5 +35,6 @@
     <Compile Include="Otras.cs" />
     <Compile Include="Procesar.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Pruebas.cs" />
   </ItemGroup>
 </Project>

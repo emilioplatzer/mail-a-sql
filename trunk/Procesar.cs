@@ -86,5 +86,8 @@ namespace Mail2Access
 		public void LoQueSeaNecesario(){
 			Uno("RV_ Alta ADSL Nro 40727 - 'BsAs - GBA Norte' - Ref_ 227542.eml");
 		}
+		public static void crearMDB(string nombreArchivo){
+			
+		}
 	}
 }
