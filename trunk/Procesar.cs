@@ -11,6 +11,7 @@ using System;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Data.OleDb;
+using ADOX;
 
 namespace Mail2Access
 {
@@ -96,7 +97,10 @@ namespace Mail2Access
 			Uno("RV_ Alta ADSL Nro 40579 - 'BsAs - GBA Bonaerense' - Ref_ 227669.eml");
 		}
 		public static void crearMDB(string nombreArchivo){
-			
+			ADOX.CatalogClass cat=new CatalogClass();
+			cat.Create("Provider=Microsoft.Jet.OLEDB.4.0;" +
+				   "Data Source="+nombreArchivo+";" +
+				   "Jet OLEDB:Engine Type=5");
 		}
 	}
 }
