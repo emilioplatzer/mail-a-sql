@@ -78,14 +78,25 @@ namespace Mail2Access
 		public static int min(int uno,int dos){
 			return uno<dos?uno:dos;
 		}
+		public static void ShowArray(Array theArray) {
+	        foreach (Object o in theArray) {
+	            Console.Write("[{0}]", o);
+	        }
+	        Console.WriteLine("\n");
+	    }
+
 		public static string expandirSignoIgual(string s){
-			int i;
+			int i,caracterNumerico;
+			string caracterString;
 			char c;
 			string digito="0123456789ABCDEF";
+			i=-1;
 			while(true){
-				i=s.IndexOf('=');
+				i=s.IndexOf('=',i+1);
 			if(i<=0) break;
-				c=char.ConvertFromUtf32(digito.IndexOf(s[i+1])*16+digito.IndexOf(s[i+2]))[0];
+				caracterNumerico=digito.IndexOf(s[i+1])*16+digito.IndexOf(s[i+2]);
+				c=(char)(caracterNumerico);
+				// c=caracterString.Substring(caracterString.Length-1)[0];
 				s=s.Substring(0,i)+c+s.Substring(i+3);
 			}
 			return s;

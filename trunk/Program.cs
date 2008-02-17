@@ -14,6 +14,7 @@ namespace Mail2Access
 	{
 		public static void Main(string[] args)
 		{
+			new Pruebas().signoIgual();
 			new Procesar().LoQueSeaNecesario();
 			Console.WriteLine("Hello World!");
 			
