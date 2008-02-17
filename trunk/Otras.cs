@@ -51,7 +51,7 @@ namespace Mail2Access
 			*/
 		}
 		public static string leerArchivoCompleto(string nombreArchivo){
-			StreamReader re = File.OpenText(@"f:\Ceitech\Servicios Especiales\MailsAProcesar\"+nombreArchivo);
+			StreamReader re = File.OpenText(@"c:\Servicios Especiales\MailsAProcesar\"+nombreArchivo);
 			string rta=re.ReadToEnd();
 			re.Close();
 			return rta;
@@ -74,6 +74,21 @@ namespace Mail2Access
 		}
 		public static bool existeArchivo(string nombreArchivo){
 			return File.Exists(nombreArchivo);
+		}
+		public static int min(int uno,int dos){
+			return uno<dos?uno:dos;
+		}
+		public static string expandirSignoIgual(string s){
+			int i;
+			char c;
+			string digito="0123456789ABCDEF";
+			while(true){
+				i=s.IndexOf('=');
+			if(i<=0) break;
+				c=char.ConvertFromUtf32(digito.IndexOf(s[i+1])*16+digito.IndexOf(s[i+2]))[0];
+				s=s.Substring(0,i)+c+s.Substring(i+3);
+			}
+			return s;
 		}
 	}
 	

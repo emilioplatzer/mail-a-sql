@@ -24,10 +24,11 @@ namespace Mail2Access
 		OleDbDataReader SelectAbierto;
 		public Procesar()
 		{
+			abrirBase();
 		}
-		string obtenerCampo(string campo){
-			// Regex r=new Regex();
-			Regex r=new Regex(" *"+campo+"[ .]*:([^:]*)(:|$)");
+		string obtenerCampo(string campo,string proximoCampo){
+			// Regex r=new Regex(" *"+campo+"[ .]*:([^:\n\r]*)(:|$|\n|\r|"+proximoCampo+")");
+			Regex r=new Regex(" *"+campo+"[ .]*:([^`]*?)("+proximoCampo+")", RegexOptions.Multiline);
 			Match m=r.Match(ContenidoPlano);
 			if(!m.Success | m.Groups.Count<=1){
 				return "";
@@ -40,22 +41,20 @@ namespace Mail2Access
 		}
 		void abrirBase(){
 			ConexionABase = new System.Data.OleDb.OleDbConnection();
-			ConexionABase.ConnectionString = @"PROVIDER=Microsoft.Jet.OLEDB.4.0;Data Source=f:\Ceitech\Servicios Especiales\ServEsp.mdb";
+			ConexionABase.ConnectionString = @"PROVIDER=Microsoft.Jet.OLEDB.4.0;Data Source=c:\Servicios Especiales\ServEsp.mdb";
 			ConexionABase.Open();
 			OleDbCommand cmd = new OleDbCommand("SELECT * FROM MOCs",ConexionABase);
 			SelectAbierto=cmd.ExecuteReader();
 		}
 		void leerMail(string nombreArchivo){
-			ContenidoPlano=Otras.leerArchivoCompleto(nombreArchivo);
-			string campo=obtenerCampo("Nro de MOC");
-			Console.WriteLine("Tengo "+campo);
+			ContenidoPlano=Otras.expandirSignoIgual(Otras.leerArchivoCompleto(nombreArchivo));
 		}
 		string stuff(string valor){
 			return valor.Replace('"',' ')
 				.Replace('\n',' ')
 				.Replace('\r',' ')
 				.Replace('\t',' ')
-				.Substring(0,250);
+				.Substring(0,Otras.min(250,valor.Length)).Trim();
 		}
 		void guardarMailEnBase(){
 			StringBuilder campos=new StringBuilder();
@@ -63,28 +62,38 @@ namespace Mail2Access
 			string separador="";
 			for(int i=1;i<SelectAbierto.FieldCount;i++){
 				string nombreCampo=SelectAbierto.GetName(i);
-				string valorCampo=obtenerCampo(nombreCampo);
+				// 
+				string proximoCampo=i<SelectAbierto.FieldCount-1?SelectAbierto.GetName(i+1):"----";
+				/*
+				string proximoCampo;
+				if(i<SelectAbierto.FieldCount-1){
+					proximoCampo=SelectAbierto.GetName(i+1);
+				}else{
+					proximoCampo="----";
+				}
+				*/
+				string valorCampo=obtenerCampo(nombreCampo,proximoCampo);
 				Console.WriteLine(nombreCampo+"="+valorCampo);
 				if(valorCampo.Length>0){
 					campos.Append(separador+"["+nombreCampo+"]");
-					valores.Append(separador+'"'+valorCampo.Replace('"',' ')+'"');
+					valores.Append(separador+'"'+stuff(valorCampo)+'"');
 					separador=",";
 				}
 			}
 			string sentencia="INSERT INTO MOCs ("+campos.ToString()+") VALUES ("+
 					valores.ToString()+")";
 			OleDbCommand cmd = new OleDbCommand(sentencia,ConexionABase);
-			Otras.escribirArchivo(@"f:\Ceitech\Servicios Especiales\temp\query.sql"
+			Otras.escribirArchivo(@"c:\Servicios Especiales\temp\query.sql"
 			                      ,sentencia);
 			Console.WriteLine("Resultado "+cmd.ExecuteNonQuery());
 		}
 		void Uno(string nombreArchivo){
-			abrirBase();
 			leerMail(nombreArchivo);
 			guardarMailEnBase();
 		}
 		public void LoQueSeaNecesario(){
 			Uno("RV_ Alta ADSL Nro 40727 - 'BsAs - GBA Norte' - Ref_ 227542.eml");
+			Uno("RV_ Alta ADSL Nro 40579 - 'BsAs - GBA Bonaerense' - Ref_ 227669.eml");
 		}
 		public static void crearMDB(string nombreArchivo){
 			

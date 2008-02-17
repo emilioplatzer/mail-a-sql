@@ -23,6 +23,10 @@ namespace Mail2Access
 		{
 		}
 		[Test]
+		public void signoIgual(){
+			Assert.AreEqual("hola che",Otras.expandirSignoIgual("hola=20che"));
+		}
+		[Test]
 		public void CreacionMdb(){
 			string nombreArchivo="tempAccesABorrar.mdb";
 			Otras.borrarArchivo(nombreArchivo);
