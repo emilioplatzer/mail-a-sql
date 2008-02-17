@@ -10,6 +10,7 @@
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.IO;
 using System.Data.OleDb;
 
 namespace Mail2Access
@@ -17,14 +18,18 @@ namespace Mail2Access
 	/// <summary>
 	/// Description of Procesar.
 	/// </summary>
-	public class Procesar
+	public class MailASql
 	{
 		string ContenidoPlano;
 		OleDbConnection ConexionABase;
 		OleDbDataReader SelectAbierto;
-		public Procesar()
+		string DirectorioMails;
+		string NombreTablaReceptora;
+		public MailASql(string nombreMDB,string nombreTabla,string directorioMails)
 		{
-			abrirBase();
+			this.NombreTablaReceptora=nombreTabla;
+			abrirBase(nombreMDB);
+			this.DirectorioMails=directorioMails;
 		}
 		string obtenerCampo(string campo,string proximoCampo){
 			// Regex r=new Regex(" *"+campo+"[ .]*:([^:\n\r]*)(:|$|\n|\r|"+proximoCampo+")");
@@ -39,9 +44,9 @@ namespace Mail2Access
 			return a.;
 			*/
 		}
-		void abrirBase(){
-			ConexionABase = BaseDatos.abrirMDB(@"c:\Servicios Especiales\ServEsp.mdb");
-			OleDbCommand cmd = new OleDbCommand("SELECT * FROM MOCs",ConexionABase);
+		void abrirBase(string nombreMDB){
+			ConexionABase = BaseDatos.abrirMDB(nombreMDB);
+			OleDbCommand cmd = new OleDbCommand("SELECT * FROM ["+NombreTablaReceptora+"]",ConexionABase);
 			SelectAbierto=cmd.ExecuteReader();
 		}
 		void leerMail(string nombreArchivo){
@@ -78,7 +83,7 @@ namespace Mail2Access
 					separador=",";
 				}
 			}
-			string sentencia="INSERT INTO MOCs ("+campos.ToString()+") VALUES ("+
+			string sentencia="INSERT INTO ["+NombreTablaReceptora+@"] ("+campos.ToString()+") VALUES ("+
 					valores.ToString()+")";
 			OleDbCommand cmd = new OleDbCommand(sentencia,ConexionABase);
 			Otras.escribirArchivo(@"c:\Servicios Especiales\temp\query.sql"
@@ -90,8 +95,16 @@ namespace Mail2Access
 			guardarMailEnBase();
 		}
 		public void LoQueSeaNecesario(){
-			Uno("RV_ Alta ADSL Nro 40727 - 'BsAs - GBA Norte' - Ref_ 227542.eml");
-			Uno("RV_ Alta ADSL Nro 40579 - 'BsAs - GBA Bonaerense' - Ref_ 227669.eml");
+			DirectoryInfo dir=new DirectoryInfo(DirectorioMails);
+			System.Console.WriteLine("donde:"+DirectorioMails);
+			FileInfo[] archivos=dir.GetFiles(); //("*.eml");
+			foreach(FileInfo archivo in archivos){
+				Uno(dir.FullName+@"\"+archivo.Name);
+			}
+		}
+		public void Close(){
+			SelectAbierto.Close();
+			ConexionABase.Close();
 		}
 	}
 }
