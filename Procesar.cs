@@ -32,17 +32,13 @@ namespace Mail2Access
 			this.DirectorioMails=directorioMails;
 		}
 		string obtenerCampo(string campo,string proximoCampo){
-			// Regex r=new Regex(" *"+campo+"[ .]*:([^:\n\r]*)(:|$|\n|\r|"+proximoCampo+")");
 			Regex r=new Regex(" *"+campo+"[ .]*:([^`]*?)("+proximoCampo+")", RegexOptions.Multiline);
 			Match m=r.Match(ContenidoPlano);
 			if(!m.Success | m.Groups.Count<=1){
 				return "";
 			}
-			return m.Groups[1].ToString();
-			/*
-			System.Collections.ArrayList a=m.Captures;
-			return a.;
-			*/
+			string rta=m.Groups[1].ToString();
+			return rta.Trim(" \t\r\n.:-,".ToCharArray());
 		}
 		void abrirBase(string nombreMDB){
 			ConexionABase = BaseDatos.abrirMDB(nombreMDB);
@@ -59,7 +55,7 @@ namespace Mail2Access
 				.Replace('\t',' ')
 				.Substring(0,Otras.min(250,valor.Length)).Trim();
 		}
-		void guardarMailEnBase(){
+		bool guardarMailEnBase(){
 			StringBuilder campos=new StringBuilder();
 			StringBuilder valores=new StringBuilder();
 			string separador="";
@@ -67,41 +63,40 @@ namespace Mail2Access
 				string nombreCampo=SelectAbierto.GetName(i);
 				// 
 				string proximoCampo=i<SelectAbierto.FieldCount-1?SelectAbierto.GetName(i+1):"----";
-				/*
-				string proximoCampo;
-				if(i<SelectAbierto.FieldCount-1){
-					proximoCampo=SelectAbierto.GetName(i+1);
-				}else{
-					proximoCampo="----";
-				}
-				*/
 				string valorCampo=obtenerCampo(nombreCampo,proximoCampo);
-				Console.WriteLine(nombreCampo+"="+valorCampo);
 				if(valorCampo.Length>0){
 					campos.Append(separador+"["+nombreCampo+"]");
 					valores.Append(separador+'"'+stuff(valorCampo)+'"');
 					separador=",";
 				}
 			}
-			string sentencia="INSERT INTO ["+NombreTablaReceptora+@"] ("+campos.ToString()+") VALUES ("+
-					valores.ToString()+")";
-			OleDbCommand cmd = new OleDbCommand(sentencia,ConexionABase);
-			Otras.escribirArchivo(@"c:\Servicios Especiales\temp\query.sql"
-			                      ,sentencia);
-			Console.WriteLine("Resultado "+cmd.ExecuteNonQuery());
+			if(campos.Length>0){
+				string sentencia="INSERT INTO ["+NombreTablaReceptora+@"] ("+campos.ToString()+") VALUES ("+
+						valores.ToString()+")";
+				OleDbCommand cmd = new OleDbCommand(sentencia,ConexionABase);
+				Otras.escribirArchivo(@"c:\Servicios Especiales\temp\query.sql"
+				                      ,sentencia);
+				cmd.ExecuteNonQuery();
+				return true;
+			}else{
+				return false;
+			}
 		}
 		void Uno(string nombreArchivo){
 			leerMail(nombreArchivo);
-			guardarMailEnBase();
+			if (guardarMailEnBase()){
+				File.Delete(nombreArchivo+".procesado");
+				File.Move(nombreArchivo,nombreArchivo+".procesado");
+			}
 		}
 		public void LoQueSeaNecesario(){
 			DirectoryInfo dir=new DirectoryInfo(DirectorioMails);
 			System.Console.WriteLine("donde:"+DirectorioMails);
-			FileInfo[] archivos=dir.GetFiles(); //("*.eml");
+			FileInfo[] archivos=dir.GetFiles("*.eml");
 			foreach(FileInfo archivo in archivos){
-				Uno(dir.FullName+@"\"+archivo.Name);
+				Uno(archivo.FullName);
 			}
-		}
+		} 
 		public void Close(){
 			SelectAbierto.Close();
 			ConexionABase.Close();
