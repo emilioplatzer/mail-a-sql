@@ -10,6 +10,7 @@
 using System;
 using System.Data.OleDb;
 using NUnit.Framework;
+using ADOX;
 
 namespace Mail2Access
 {
@@ -29,20 +30,34 @@ namespace Mail2Access
 			Assert.AreEqual("Línea",Otras.expandirSignoIgual("L=EDnea"));
 			Assert.AreEqual("el \nsalto",Otras.expandirSignoIgual("el =\nsalto"));
 			Assert.AreEqual("lang=ES",Otras.expandirSignoIgual("lang=3DES"));
-			/*
-			Assert.AreEqual("hola che",Otras.expandirSignoIgual("L=EDnea"));
-			Assert.AreEqual("hola che",Otras.expandirSignoIgual("L=EDnea"));
-			Assert.AreEqual("hola che",Otras.expandirSignoIgual("L=EDnea"));
-			Assert.AreEqual("hola che",Otras.expandirSignoIgual("L=EDnea"));
-			*/
 		}
 		[Test]
 		public void CreacionMdb(){
 			string nombreArchivo="tempAccesABorrar.mdb";
 			Otras.borrarArchivo(nombreArchivo);
 			Assert.IsTrue(!Otras.existeArchivo(nombreArchivo),"no debería existir");
-			Procesar.crearMDB(nombreArchivo);
+			Catalog cat=BaseDatos.crearMDB(nombreArchivo);
 			Assert.IsTrue(Otras.existeArchivo(nombreArchivo),"debería existir");
+		}
+		[Test]
+		public void Proceso(){
+			string nombreArchivo="tempAccesABorrar2.mdb";
+			Otras.borrarArchivo(nombreArchivo);
+			Assert.IsTrue(!Otras.existeArchivo(nombreArchivo),"no debería existir");
+			BaseDatos.crearMDB(nombreArchivo);
+			Assert.IsTrue(Otras.existeArchivo(nombreArchivo),"debería existir");
+			OleDbConnection con=BaseDatos.abrirMDB(nombreArchivo);
+			string sentencia=@"
+				CREATE TABLE Receptor(
+				   Numero varchar(250),
+				   Nombre varchar(250),
+				   [Tipo de documento] varchar(250),
+				   [Número de documento] varchar(250),
+				   Observaciones varchar(250)
+				   )";
+			OleDbCommand com=new OleDbCommand(sentencia,con);
+			com.ExecuteNonQuery();
+			
 		}
 	}
 }

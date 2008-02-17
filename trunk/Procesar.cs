@@ -11,7 +11,6 @@ using System;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Data.OleDb;
-using ADOX;
 
 namespace Mail2Access
 {
@@ -41,9 +40,7 @@ namespace Mail2Access
 			*/
 		}
 		void abrirBase(){
-			ConexionABase = new System.Data.OleDb.OleDbConnection();
-			ConexionABase.ConnectionString = @"PROVIDER=Microsoft.Jet.OLEDB.4.0;Data Source=c:\Servicios Especiales\ServEsp.mdb";
-			ConexionABase.Open();
+			ConexionABase = BaseDatos.abrirMDB(@"c:\Servicios Especiales\ServEsp.mdb");
 			OleDbCommand cmd = new OleDbCommand("SELECT * FROM MOCs",ConexionABase);
 			SelectAbierto=cmd.ExecuteReader();
 		}
@@ -95,12 +92,6 @@ namespace Mail2Access
 		public void LoQueSeaNecesario(){
 			Uno("RV_ Alta ADSL Nro 40727 - 'BsAs - GBA Norte' - Ref_ 227542.eml");
 			Uno("RV_ Alta ADSL Nro 40579 - 'BsAs - GBA Bonaerense' - Ref_ 227669.eml");
-		}
-		public static void crearMDB(string nombreArchivo){
-			ADOX.CatalogClass cat=new CatalogClass();
-			cat.Create("Provider=Microsoft.Jet.OLEDB.4.0;" +
-				   "Data Source="+nombreArchivo+";" +
-				   "Jet OLEDB:Engine Type=5");
 		}
 	}
 }

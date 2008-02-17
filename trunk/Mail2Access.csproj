@@ -32,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="BaseDatos.cs" />
     <Compile Include="Otras.cs" />
     <Compile Include="Procesar.cs" />
     <Compile Include="Program.cs" />
