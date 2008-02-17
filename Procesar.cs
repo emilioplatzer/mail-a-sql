@@ -38,7 +38,7 @@ namespace Mail2Access
 				return "";
 			}
 			string rta=m.Groups[1].ToString();
-			return rta.Trim(" \t\r\n.:-,".ToCharArray());
+			return rta.Trim(" \t\r\n.:-,=;".ToCharArray());
 		}
 		void abrirBase(string nombreMDB){
 			ConexionABase = BaseDatos.abrirMDB(nombreMDB);
@@ -62,7 +62,9 @@ namespace Mail2Access
 			for(int i=1;i<SelectAbierto.FieldCount;i++){
 				string nombreCampo=SelectAbierto.GetName(i);
 				// 
-				string proximoCampo=i<SelectAbierto.FieldCount-1?SelectAbierto.GetName(i+1):"----";
+				string proximoCampo=i<SelectAbierto.FieldCount-1
+									?SelectAbierto.GetName(i+1)
+									:"----";
 				string valorCampo=obtenerCampo(nombreCampo,proximoCampo);
 				if(valorCampo.Length>0){
 					campos.Append(separador+"["+nombreCampo+"]");
@@ -83,10 +85,15 @@ namespace Mail2Access
 			}
 		}
 		void Uno(string nombreArchivo){
+			System.Console.Write("Mail:"+nombreArchivo);
 			leerMail(nombreArchivo);
+			System.Console.Write(" leido");
 			if (guardarMailEnBase()){
+				System.Console.WriteLine(" procesado");
 				File.Delete(nombreArchivo+".procesado");
 				File.Move(nombreArchivo,nombreArchivo+".procesado");
+			}else{
+				System.Console.WriteLine(" ERROR, NO CONTIENE CAMPOS VALIDOS");
 			}
 		}
 		public void LoQueSeaNecesario(){
