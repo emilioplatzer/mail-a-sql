@@ -87,7 +87,6 @@ namespace Mail2Access
 
 		public static string expandirSignoIgual(string s){
 			int i,caracterNumerico;
-			string caracterString;
 			char c;
 			string digito="0123456789ABCDEF";
 			i=-1;
