@@ -94,10 +94,14 @@ namespace Mail2Access
 			while(true){
 				i=s.IndexOf('=',i+1);
 			if(i<=0) break;
-				caracterNumerico=digito.IndexOf(s[i+1])*16+digito.IndexOf(s[i+2]);
-				c=(char)(caracterNumerico);
-				// c=caracterString.Substring(caracterString.Length-1)[0];
-				s=s.Substring(0,i)+c+s.Substring(i+3);
+				if(s[i+1]=='\n'){
+					s=s.Remove(i,1);
+				}else{
+					caracterNumerico=digito.IndexOf(s[i+1])*16+digito.IndexOf(s[i+2]);
+					c=(char)(caracterNumerico);
+					// c=caracterString.Substring(caracterString.Length-1)[0];
+					s=s.Substring(0,i)+c+s.Substring(i+3);
+				}
 			}
 			return s;
 		}

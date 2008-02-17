@@ -27,7 +27,7 @@ namespace Mail2Access
 			Assert.AreEqual("hola che",Otras.expandirSignoIgual("hola=20che"));
 			Assert.AreEqual("Región",Otras.expandirSignoIgual("Regi=F3n"));
 			Assert.AreEqual("Línea",Otras.expandirSignoIgual("L=EDnea"));
-			// Assert.AreEqual("el \nsalto",Otras.expandirSignoIgual("el =\nsalto"));
+			Assert.AreEqual("el \nsalto",Otras.expandirSignoIgual("el =\nsalto"));
 			Assert.AreEqual("lang=ES",Otras.expandirSignoIgual("lang=3DES"));
 			/*
 			Assert.AreEqual("hola che",Otras.expandirSignoIgual("L=EDnea"));
