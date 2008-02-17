@@ -14,9 +14,15 @@ namespace Mail2Access
 	{
 		public static void Main(string[] args)
 		{
-			new Pruebas().signoIgual();
-			new Procesar().LoQueSeaNecesario();
-			Console.WriteLine("Hello World!");
+			new Pruebas().Proceso();
+			/*
+			new MailASql(System.Environment.GetEnvironmentVariable("MAIL2ACCESS_DIR")
+			             	+@"\ServEsp.mdb"
+			             ,"MOCs"
+			             ,"MailsAProcesar")
+				.LoQueSeaNecesario();
+			*/
+			Console.WriteLine("Procesado!");
 			
 			// TODO: Implement Functionality Here
 			

@@ -51,7 +51,7 @@ namespace Mail2Access
 			*/
 		}
 		public static string leerArchivoCompleto(string nombreArchivo){
-			StreamReader re = File.OpenText(@"c:\Servicios Especiales\MailsAProcesar\"+nombreArchivo);
+			StreamReader re = File.OpenText(nombreArchivo);
 			string rta=re.ReadToEnd();
 			re.Close();
 			return rta;
