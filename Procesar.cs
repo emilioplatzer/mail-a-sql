@@ -76,7 +76,8 @@ namespace Mail2Access
 				string sentencia="INSERT INTO ["+NombreTablaReceptora+@"] ("+campos.ToString()+") VALUES ("+
 						valores.ToString()+")";
 				OleDbCommand cmd = new OleDbCommand(sentencia,ConexionABase);
-				Otras.escribirArchivo(@"c:\Servicios Especiales\temp\query.sql"
+				Otras.escribirArchivo(System.Environment.GetEnvironmentVariable("TEMP")
+				                      + @"query.sql"
 				                      ,sentencia);
 				cmd.ExecuteNonQuery();
 				return true;
